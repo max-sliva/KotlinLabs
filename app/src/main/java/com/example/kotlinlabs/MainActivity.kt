@@ -8,17 +8,31 @@ import android.widget.Button
 import com.example.kotlinlabs.databinding.ActivityMainBinding
 import android.widget.EditText
 import android.widget.TextView
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
+    private lateinit var langList: ArrayList<ProgrLang>
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var progLangsAdapter: MyAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+        langList = arrayListOf(ProgrLang("Basic", 1964), ProgrLang("Pascal", 1975), ProgrLang("C", 1972),
+                               ProgrLang("C++", 1983), ProgrLang("C#", 2000), ProgrLang("Java", 1995),
+                               ProgrLang("Python", 1991), ProgrLang("JavaScript", 1995), ProgrLang("Kotlin", 2011))
+        recyclerView = findViewById(R.id.recyclerView)
+        progLangsAdapter = MyAdapter(langList)
+        val layoutManager = LinearLayoutManager(applicationContext)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.adapter = progLangsAdapter
 
     }
 
