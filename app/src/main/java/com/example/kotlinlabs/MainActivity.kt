@@ -1,13 +1,13 @@
 package com.example.kotlinlabs
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
-import com.example.kotlinlabs.databinding.ActivityMainBinding
 import android.widget.EditText
-import android.widget.TextView
+import com.example.kotlinlabs.databinding.ActivityMainBinding
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,16 +24,33 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-        langList = arrayListOf(ProgrLang("Basic", 1964), ProgrLang("Pascal", 1975), ProgrLang("C", 1972),
-                               ProgrLang("C++", 1983), ProgrLang("C#", 2000), ProgrLang("Java", 1995),
-                               ProgrLang("Python", 1991), ProgrLang("JavaScript", 1995), ProgrLang("Kotlin", 2011))
+        langList = arrayListOf(ProgrLang("Basic", 1964, R.drawable.basic), ProgrLang("Pascal", 1975, R.drawable.pascal),
+                               ProgrLang("C", 1972, R.drawable.c), ProgrLang("C++", 1983, R.drawable.cpp),
+                               ProgrLang("C#", 2000, R.drawable.c_sharp), ProgrLang("Java", 1995, R.drawable.java),
+                               ProgrLang("Python", 1991, R.drawable.python), ProgrLang("JavaScript", 1995), ProgrLang("Kotlin", 2011))
         recyclerView = findViewById(R.id.recyclerView)
-        progLangsAdapter = MyAdapter(langList)
+        progLangsAdapter = MyAdapter(langList, applicationContext)
         val layoutManager = LinearLayoutManager(applicationContext)
         recyclerView.layoutManager = layoutManager
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = progLangsAdapter
 
+        val langName = findViewById<EditText>(R.id.editName)
+        val langYear = findViewById<EditText>(R.id.editYear)
+        val button = findViewById<Button>(R.id.button)
+        val TAG = this.javaClass.getSimpleName()
+        button.setOnClickListener {
+            val newLang = ProgrLang(langName.text.toString(), Integer.parseInt(langYear.text.toString()))
+            Log.i(TAG,""+newLang)
+            langList.add(0,newLang)
+            progLangsAdapter.notifyDataSetChanged()
+            langName.setText("")
+            langYear.setText("")
+        }
+
+//        progLangsAdapter.onItemClick = { lang ->
+////            Toast.makeText (recyclerView.context, "Selected: " + lang + "pos in list = "+langList.indexOf(lang), Toast.LENGTH_LONG).show()
+//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
