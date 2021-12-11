@@ -22,7 +22,7 @@ internal class MyAdapter(private var langList: ArrayList<ProgrLang>, private var
         init {
             itemView.setOnClickListener {
                 // onItemClick?.invoke(langList[adapterPosition])
-                Toast.makeText(view.context, "pos =" + adapterPosition, Toast.LENGTH_LONG).show()
+                Toast.makeText(view.context, "pos = " + adapterPosition, Toast.LENGTH_LONG).show()
                 showMessage(langName.text.toString(), view)
             }
         }
@@ -31,14 +31,12 @@ internal class MyAdapter(private var langList: ArrayList<ProgrLang>, private var
             //создаем диалоговое окно, параметр – контекст, который берем у view
             val builder = AlertDialog.Builder(view.context)
             builder.setTitle(str) //заголовок диалогового окна
-            //создаем переменную для нахождения строкового ресурса (см. текст после примера)
-            //ищем в строковых ресурсах строку с именем, которое совпадает с значением str
-            //и берем её идентификатор
+//создаем переменную для нахождения строкового ресурса (см. текст после примера)
+//ищем в строковых ресурсах строку с именем, равным значению str и берем её идентификатор
             val strId: Int = context.resources.getIdentifier(str, "string", context.packageName)
             var strValue: String? = ""
             //если ресурс был найден, т.е. strId!=0, то по найденному идентификатору получаем значение строки
-            if (strId != 0) strValue =
-                context.getString(strId)
+            if (strId != 0) strValue = context.getString(strId)
             builder.setMessage(strValue) //задаем содержимое окна
             //создаем в окне кнопку ОК и задаем ее функционал
             builder.setPositiveButton(android.R.string.ok) { dialog, which ->

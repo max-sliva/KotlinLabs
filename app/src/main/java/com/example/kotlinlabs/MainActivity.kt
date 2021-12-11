@@ -1,16 +1,19 @@
 package com.example.kotlinlabs
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
-import com.example.kotlinlabs.databinding.ActivityMainBinding
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kotlinlabs.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -54,18 +57,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> onAboutClick(item)
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun onAboutClick(item: MenuItem): Boolean { //наш метод для показа диалогового окна с информацией
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle(item.title)
+        //ищем id строкового ресурса с именем about_content – в нем текст для диалогового окна
+        val strId = resources.getIdentifier("about_content", "string", packageName)
+        var strValue = "" //объявляем пустую строку
+        if (strId != 0) strValue = getString(strId) //получаем строку с нужным id
+        builder.setMessage(strValue)
+        builder.setPositiveButton(android.R.string.ok) { dialog, which -> dialog.dismiss() }
+        builder.show()
+        return true
     }
 }

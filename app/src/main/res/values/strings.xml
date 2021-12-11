@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">KotlinLabs</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Настройки</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -12,5 +12,8 @@
     <string name="Pascal">Автор - Никлаус Вирт.</string>
     <string name="C">Автор - Деннис Ритчи.</string>
     <string name="Java">Автор - Джеймс Гослинг.</string>
-
+    <string name="save">Сохранить</string>
+    <string name="open">Открыть</string>
+    <string name="about">О программе</string>
+    <string name="about_content">Супер прога о языках программирования</string>
 </resources>
