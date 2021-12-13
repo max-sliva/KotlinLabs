@@ -1,18 +1,18 @@
 package com.example.kotlinlabs
 
+import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlinlabs.databinding.ActivityMainBinding
+import android.content.Intent
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,18 +38,6 @@ class MainActivity : AppCompatActivity() {
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = progLangsAdapter
 
-        val langName = findViewById<EditText>(R.id.editName)
-        val langYear = findViewById<EditText>(R.id.editYear)
-        val button = findViewById<Button>(R.id.button)
-        val TAG = this.javaClass.getSimpleName()
-        button.setOnClickListener {
-            val newLang = ProgrLang(langName.text.toString(), Integer.parseInt(langYear.text.toString()))
-            Log.i(TAG,""+newLang)
-            langList.add(0,newLang)
-            progLangsAdapter.notifyDataSetChanged()
-            langName.setText("")
-            langYear.setText("")
-        }
 
 //        progLangsAdapter.onItemClick = { lang ->
 ////            Toast.makeText (recyclerView.context, "Selected: " + lang + "pos in list = "+langList.indexOf(lang), Toast.LENGTH_LONG).show()
@@ -64,8 +52,26 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> onAboutClick(item)
+            R.id.addNew -> onAddNewClick(item)
             else -> super.onOptionsItemSelected(item)
         }
+    }
+    private val secondActivityWithResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+//            if (result.data?.hasExtra(RESULT_TEXT)!!) {
+//
+//            }
+            val newLang = result.data?.getSerializableExtra("newItem") as ProgrLang
+            Toast.makeText (recyclerView.context, "New: " + newLang.name + " "+newLang.year, Toast.LENGTH_LONG).show()
+            langList.add(0,newLang)
+            progLangsAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun onAddNewClick(item: MenuItem): Boolean {
+        val newAct = Intent(applicationContext, InputActivity::class.java)
+        secondActivityWithResult.launch(newAct)
+        return true
     }
 
     private fun onAboutClick(item: MenuItem): Boolean { //наш метод для показа диалогового окна с информацией

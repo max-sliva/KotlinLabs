@@ -16,4 +16,5 @@
     <string name="open">Открыть</string>
     <string name="about">О программе</string>
     <string name="about_content">Супер прога о языках программирования</string>
+    <string name="addNew">Добавить язык</string>
 </resources>
