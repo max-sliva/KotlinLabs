@@ -9,42 +9,38 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
-internal class MyAdapter(private var langList: ArrayList<ProgrLang>, private var context: Context) :
+internal class MyAdapter(private var langList: ArrayList<ProgrLang>) :
     RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
-    //    var onItemClick: ((ProgrLang) -> Unit)? = null
-//    private var context: Context? = null
+
     internal inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
-//        , View.OnCreateContextMenuListener //, PopupMenu.OnMenuItemClickListener
+        , View.OnCreateContextMenuListener //, PopupMenu.OnMenuItemClickListener
     {
         var langName: TextView = view.findViewById(R.id.name)
         var langYear: TextView = view.findViewById(R.id.year)
         var langAuthor: ImageView = view.findViewById(R.id.imageView1)
 
         init {
-
             itemView.setOnClickListener {
                 // onItemClick?.invoke(langList[adapterPosition])
                 Toast.makeText(view.context, "pos = " + adapterPosition, Toast.LENGTH_LONG).show()
                 showMessage(langName.text.toString(), view)
             }
-//            itemView.setOnLongClickListener {
-//
-//            }
+
 //            view.setOnCreateContextMenuListener{ menu: ContextMenu, view: View, contextMenuInfo: ContextMenu.ContextMenuInfo ->
 //                val Edit = menu.add(this.adapterPosition, 1, 1, "Edit")
 //                val Delete = menu.add(this.adapterPosition, 2, 2, "Delete")
 //            }
-//            itemView.setOnCreateContextMenuListener(this)
+            itemView.setOnCreateContextMenuListener(this)
         }
 
-//        override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenu.ContextMenuInfo) {
+        override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenu.ContextMenuInfo?) {
 //            onCreateContextMenu(menu, view, menuInfo)
-////            var popup =  PopupMenu(view.context, view)
-////            popup.menuInflater.inflate(R.menu.context_menu, popup.menu)
-////            popup.show()
-//            val Edit = menu.add(Menu.NONE, 1, 1, "Edit")
-//            val Delete = menu.add(Menu.NONE, 2, 2, "Delete")
-//        }
+//            var popup =  PopupMenu(view.context, view)
+//            popup.menuInflater.inflate(R.menu.context_menu, popup.menu)
+//            popup.show()
+            val Edit = menu.add(Menu.NONE, 1, 1, "Edit")
+            val Delete = menu.add(Menu.NONE, 2, 2, "Delete")
+        }
 
 //        override fun onMenuItemClick(p0: MenuItem?): Boolean {
 //            TODO("Not yet implemented")
@@ -56,10 +52,10 @@ internal class MyAdapter(private var langList: ArrayList<ProgrLang>, private var
             builder.setTitle(str) //заголовок диалогового окна
 //создаем переменную для нахождения строкового ресурса (см. текст после примера)
 //ищем в строковых ресурсах строку с именем, равным значению str и берем её идентификатор
-            val strId: Int = context.resources.getIdentifier(str, "string", context.packageName)
+            val strId: Int = view.context.resources.getIdentifier(str, "string", view.context.packageName)
             var strValue: String? = ""
             //если ресурс был найден, т.е. strId!=0, то по найденному идентификатору получаем значение строки
-            if (strId != 0) strValue = context.getString(strId)
+            if (strId != 0) strValue = view.context.getString(strId)
             builder.setMessage(strValue) //задаем содержимое окна
             //создаем в окне кнопку ОК и задаем ее функционал
             builder.setPositiveButton(android.R.string.ok) { dialog, which ->
@@ -80,22 +76,21 @@ internal class MyAdapter(private var langList: ArrayList<ProgrLang>, private var
         holder.langName.text = lang.name
         holder.langYear.text = lang.year.toString()
         holder.langAuthor.setImageResource(lang.picture)
-
-        holder.itemView.setOnLongClickListener {
-            var popup =  PopupMenu(it.context, it)
-            popup.menuInflater.inflate(R.menu.context_menu, popup.menu)
-            val m = popup.menu
-            popup.setOnMenuItemClickListener(object : MenuItem.OnMenuItemClickListener,
-                PopupMenu.OnMenuItemClickListener {
-                override fun onMenuItemClick(item: MenuItem): Boolean {
-                    Toast.makeText(it.context, item.title, Toast.LENGTH_SHORT).show()
-                    return true
-                }
-            })
-            popup.show()
-            Toast.makeText(it.context, "name = " + lang.name, Toast.LENGTH_LONG).show()
-            return@setOnLongClickListener false
-        }
+//        holder.itemView.setOnLongClickListener {
+//            var popup =  PopupMenu(it.context, it)
+//            popup.menuInflater.inflate(R.menu.context_menu, popup.menu)
+//            val m = popup.menu
+//            popup.setOnMenuItemClickListener(object : MenuItem.OnMenuItemClickListener,
+//                PopupMenu.OnMenuItemClickListener {
+//                override fun onMenuItemClick(item: MenuItem): Boolean {
+//                    Toast.makeText(it.context, item.title, Toast.LENGTH_SHORT).show()
+//                    return true
+//                }
+//            })
+//            popup.show()
+//            Toast.makeText(it.context, "name = " + lang.name, Toast.LENGTH_LONG).show()
+//            return@setOnLongClickListener false
+//        }
     }
 
     override fun getItemCount() = langList.size

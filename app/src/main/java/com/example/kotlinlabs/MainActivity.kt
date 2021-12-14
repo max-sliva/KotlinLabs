@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
                                                              ProgrLang("Kotlin", 2011))
     private lateinit var recyclerView: RecyclerView
     private lateinit var progLangsAdapter: MyAdapter
-    lateinit var info: AdapterView.AdapterContextMenuInfo
+//    lateinit var info: AdapterView.AdapterContextMenuInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,27 +41,11 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "From saved", Toast.LENGTH_SHORT).show()
         } else Toast.makeText(this, "From create", Toast.LENGTH_SHORT).show()
 
-        progLangsAdapter = MyAdapter(langList, applicationContext)
+        progLangsAdapter = MyAdapter(langList)
         val layoutManager = LinearLayoutManager(applicationContext)
         recyclerView.layoutManager = layoutManager
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = progLangsAdapter
-    }
-
-//    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
-//        super.onCreateContextMenu(menu, v, menuInfo)
-//        menuInflater.inflate(R.menu.context_menu, menu)
-//        info = menuInfo as AdapterView.AdapterContextMenuInfo
-//    }
-
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.change_picture -> {
-                Toast.makeText(this, "change", Toast.LENGTH_SHORT).show()
-                return true
-            }
-            else -> super.onContextItemSelected(item)
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
