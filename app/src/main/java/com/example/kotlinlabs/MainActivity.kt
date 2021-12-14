@@ -11,37 +11,63 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlinlabs.databinding.ActivityMainBinding
 import android.content.Intent
+import android.view.ContextMenu
+import android.view.View
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var langList: ArrayList<ProgrLang>
+    private var langList: ArrayList<ProgrLang> = arrayListOf(ProgrLang("Basic", 1964, R.drawable.basic), ProgrLang("Pascal", 1975, R.drawable.pascal),
+                                                             ProgrLang("C", 1972, R.drawable.c), ProgrLang("C++", 1983, R.drawable.cpp),
+                                                             ProgrLang("C#", 2000, R.drawable.c_sharp), ProgrLang("Java", 1995, R.drawable.java),
+                                                             ProgrLang("Python", 1991, R.drawable.python), ProgrLang("JavaScript", 1995),
+                                                             ProgrLang("Kotlin", 2011))
     private lateinit var recyclerView: RecyclerView
     private lateinit var progLangsAdapter: MyAdapter
+    lateinit var info: AdapterView.AdapterContextMenuInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-        langList = arrayListOf(ProgrLang("Basic", 1964, R.drawable.basic), ProgrLang("Pascal", 1975, R.drawable.pascal),
-                               ProgrLang("C", 1972, R.drawable.c), ProgrLang("C++", 1983, R.drawable.cpp),
-                               ProgrLang("C#", 2000, R.drawable.c_sharp), ProgrLang("Java", 1995, R.drawable.java),
-                               ProgrLang("Python", 1991, R.drawable.python), ProgrLang("JavaScript", 1995), ProgrLang("Kotlin", 2011))
         recyclerView = findViewById(R.id.recyclerView)
+        registerForContextMenu(recyclerView)
+        if (savedInstanceState!=null && savedInstanceState.containsKey("langs")) {
+            langList = savedInstanceState.getSerializable("langs") as ArrayList<ProgrLang>
+            Toast.makeText(this, "From saved", Toast.LENGTH_SHORT).show()
+        } else Toast.makeText(this, "From create", Toast.LENGTH_SHORT).show()
+
         progLangsAdapter = MyAdapter(langList, applicationContext)
         val layoutManager = LinearLayoutManager(applicationContext)
         recyclerView.layoutManager = layoutManager
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = progLangsAdapter
+    }
 
+//    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+//        super.onCreateContextMenu(menu, v, menuInfo)
+//        menuInflater.inflate(R.menu.context_menu, menu)
+//        info = menuInfo as AdapterView.AdapterContextMenuInfo
+//    }
 
-//        progLangsAdapter.onItemClick = { lang ->
-////            Toast.makeText (recyclerView.context, "Selected: " + lang + "pos in list = "+langList.indexOf(lang), Toast.LENGTH_LONG).show()
-//        }
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.change_picture -> {
+                Toast.makeText(this, "change", Toast.LENGTH_SHORT).show()
+                return true
+            }
+            else -> super.onContextItemSelected(item)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        Toast.makeText(this, "saved", Toast.LENGTH_SHORT).show() //сообщение для отслеживания
+        outState.putSerializable("langs", langList) //помещаем наш основной массив в хранилище
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -58,9 +84,6 @@ class MainActivity : AppCompatActivity() {
     }
     private val secondActivityWithResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-//            if (result.data?.hasExtra(RESULT_TEXT)!!) {
-//
-//            }
             val newLang = result.data?.getSerializableExtra("newItem") as ProgrLang
             Toast.makeText (recyclerView.context, "New: " + newLang.name + " "+newLang.year, Toast.LENGTH_LONG).show()
             langList.add(0,newLang)

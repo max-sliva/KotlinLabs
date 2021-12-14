@@ -17,4 +17,5 @@
     <string name="about">О программе</string>
     <string name="about_content">Супер прога о языках программирования</string>
     <string name="addNew">Добавить язык</string>
+    <string name="change_picture">Поменять картинку</string>
 </resources>
