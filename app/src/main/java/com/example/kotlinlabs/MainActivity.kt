@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlinlabs.databinding.ActivityMainBinding
 import android.content.Intent
+import android.util.Log
 import android.view.ContextMenu
 import android.view.View
 import android.widget.AdapterView
@@ -35,16 +36,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         recyclerView = findViewById(R.id.recyclerView)
-        registerForContextMenu(recyclerView)
+      //  registerForContextMenu(recyclerView)
         if (savedInstanceState!=null && savedInstanceState.containsKey("langs")) {
             langList = savedInstanceState.getSerializable("langs") as ArrayList<ProgrLang>
             Toast.makeText(this, "From saved", Toast.LENGTH_SHORT).show()
         } else Toast.makeText(this, "From create", Toast.LENGTH_SHORT).show()
 
-        progLangsAdapter = MyAdapter(langList)
+        progLangsAdapter = MyAdapter(langList, this)
         val layoutManager = LinearLayoutManager(applicationContext)
         recyclerView.layoutManager = layoutManager
-        recyclerView.itemAnimator = DefaultItemAnimator()
+//        recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = progLangsAdapter
     }
 
@@ -66,6 +67,15 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        println(item)
+        val TAG = this.javaClass.getSimpleName()
+        Log.i(TAG,"меню = "+item)
+        return true
+        //return super.onContextItemSelected(item)
+    }
+
     private val secondActivityWithResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val newLang = result.data?.getSerializableExtra("newItem") as ProgrLang

@@ -1,5 +1,6 @@
 package com.example.kotlinlabs
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.view.*
@@ -7,25 +8,28 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 
-internal class MyAdapter(private var langList: ArrayList<ProgrLang>) :
+ class MyAdapter(private var langList: ArrayList<ProgrLang>,
+                         private var context: Context) :
     RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
-    internal inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
+     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
         , View.OnCreateContextMenuListener //, PopupMenu.OnMenuItemClickListener
     {
         var langName: TextView = view.findViewById(R.id.name)
         var langYear: TextView = view.findViewById(R.id.year)
         var langAuthor: ImageView = view.findViewById(R.id.imageView1)
-
+        //var activity = context as Activity
         init {
             itemView.setOnClickListener {
                 // onItemClick?.invoke(langList[adapterPosition])
                 Toast.makeText(view.context, "pos = " + adapterPosition, Toast.LENGTH_LONG).show()
                 showMessage(langName.text.toString(), view)
             }
-
+//            val act = itemView.context as Activity
 //            view.setOnCreateContextMenuListener{ menu: ContextMenu, view: View, contextMenuInfo: ContextMenu.ContextMenuInfo ->
 //                val Edit = menu.add(this.adapterPosition, 1, 1, "Edit")
 //                val Delete = menu.add(this.adapterPosition, 2, 2, "Delete")
@@ -34,16 +38,30 @@ internal class MyAdapter(private var langList: ArrayList<ProgrLang>) :
         }
 
         override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenu.ContextMenuInfo?) {
-//            onCreateContextMenu(menu, view, menuInfo)
 //            var popup =  PopupMenu(view.context, view)
 //            popup.menuInflater.inflate(R.menu.context_menu, popup.menu)
 //            popup.show()
+//            popup.setOnMenuItemClickListener(this)
             val Edit = menu.add(Menu.NONE, 1, 1, "Edit")
             val Delete = menu.add(Menu.NONE, 2, 2, "Delete")
         }
 
-//        override fun onMenuItemClick(p0: MenuItem?): Boolean {
-//            TODO("Not yet implemented")
+//        override fun onMenuItemClick(item: MenuItem?): Boolean {
+//            return when (item?.itemId) {
+////                R.id.change_picture -> onChangePicture(item)
+//                else -> {false}
+//            }
+//        }
+//        private val pickImages = (context as MainActivity).registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+//            uri?.let {uri ->
+//                langAuthor.setImageURI(uri)
+//            }
+//        }
+//
+//        private fun onChangePicture(item: MenuItem): Boolean {
+//            Toast.makeText(itemView.context,"name = ${this.langName.text}", Toast.LENGTH_SHORT).show()
+//            pickImages.launch("image/*")
+//            return false
 //        }
 
         fun showMessage(str: String?, view: View) {
