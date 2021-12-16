@@ -1,27 +1,23 @@
 package com.example.kotlinlabs
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.view.*
-import android.widget.ImageView
-import android.widget.PopupMenu
-import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.*
+import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 
  class MyAdapter(private var langList: ArrayList<ProgrLang>,
                          private var context: Context) :
-    RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
-
-     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
-        , View.OnCreateContextMenuListener //, PopupMenu.OnMenuItemClickListener
+    RecyclerView.Adapter<MyAdapter.MyViewHolder>() , View.OnCreateContextMenuListener{
+     var myInterface: MyInterface? = null
+     class MyViewHolder(view: View, onCreateContextMenuListener: View.OnCreateContextMenuListener) : RecyclerView.ViewHolder(view)
+        //, View.OnCreateContextMenuListener //, PopupMenu.OnMenuItemClickListener
     {
         var langName: TextView = view.findViewById(R.id.name)
         var langYear: TextView = view.findViewById(R.id.year)
         var langAuthor: ImageView = view.findViewById(R.id.imageView1)
+
         //var activity = context as Activity
         init {
             itemView.setOnClickListener {
@@ -34,17 +30,19 @@ import androidx.recyclerview.widget.RecyclerView
 //                val Edit = menu.add(this.adapterPosition, 1, 1, "Edit")
 //                val Delete = menu.add(this.adapterPosition, 2, 2, "Delete")
 //            }
-            itemView.setOnCreateContextMenuListener(this)
+            itemView.setOnCreateContextMenuListener(onCreateContextMenuListener)
         }
 
-        override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenu.ContextMenuInfo?) {
-//            var popup =  PopupMenu(view.context, view)
-//            popup.menuInflater.inflate(R.menu.context_menu, popup.menu)
-//            popup.show()
-//            popup.setOnMenuItemClickListener(this)
-            val Edit = menu.add(Menu.NONE, 1, 1, "Edit")
-            val Delete = menu.add(Menu.NONE, 2, 2, "Delete")
-        }
+//        override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenu.ContextMenuInfo?) {
+////            var popup =  PopupMenu(view.context, view)
+////            popup.menuInflater.inflate(R.menu.context_menu, popup.menu)
+////            popup.show()
+////            popup.setOnMenuItemClickListener(this)
+//            val edit = menu.add(Menu.NONE, 1, 1, "Edit")
+//            edit.setOnMenuItemClickListener { myInterface?.callback(langName.toString(), langAuthor);  false }
+//            val delete = menu.add(Menu.NONE, 2, 2, "Delete")
+//
+//        }
 
 //        override fun onMenuItemClick(item: MenuItem?): Boolean {
 //            return when (item?.itemId) {
@@ -84,9 +82,26 @@ import androidx.recyclerview.widget.RecyclerView
         }
     }
 
+     override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenu.ContextMenuInfo?) {
+//            var popup =  PopupMenu(view.context, view)
+//            popup.menuInflater.inflate(R.menu.context_menu, popup.menu)
+//            popup.show()
+//            popup.setOnMenuItemClickListener(this)
+         val edit = menu.add(Menu.NONE, 1, 1, "Edit")
+         edit.setOnMenuItemClickListener {
+//             myInterface?.callback(langName.toString(), langAuthor);
+             var pic = (view as LinearLayout).getChildAt(1) as ImageView
+             println("Edit "+pic)
+             myInterface?.callback(pic)
+             false
+         }
+         val delete = menu.add(Menu.NONE, 2, 2, "Delete")
+
+     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.my_list, parent, false)
-        return MyViewHolder(itemView)
+        return MyViewHolder(itemView, this)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {

@@ -15,11 +15,12 @@ import android.util.Log
 import android.view.ContextMenu
 import android.view.View
 import android.widget.AdapterView
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 
-class MainActivity : AppCompatActivity() {
-
+class MainActivity : AppCompatActivity(), MyInterface {
+    private lateinit var imageAuthor: ImageView
     private lateinit var binding: ActivityMainBinding
     private var langList: ArrayList<ProgrLang> = arrayListOf(ProgrLang("Basic", 1964, R.drawable.basic), ProgrLang("Pascal", 1975, R.drawable.pascal),
                                                              ProgrLang("C", 1972, R.drawable.c), ProgrLang("C++", 1983, R.drawable.cpp),
@@ -42,7 +43,8 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "From saved", Toast.LENGTH_SHORT).show()
         } else Toast.makeText(this, "From create", Toast.LENGTH_SHORT).show()
 
-        progLangsAdapter = MyAdapter(langList, this)
+        progLangsAdapter = MyAdapter(langList, this).also { it.myInterface = this }
+//        progLangsAdapter.
         val layoutManager = LinearLayoutManager(applicationContext)
         recyclerView.layoutManager = layoutManager
 //        recyclerView.itemAnimator = DefaultItemAnimator()
@@ -68,13 +70,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        println(item)
-        val TAG = this.javaClass.getSimpleName()
-        Log.i(TAG,"меню = "+item)
-        return true
-        //return super.onContextItemSelected(item)
-    }
+//    override fun onContextItemSelected(item: MenuItem): Boolean {
+//        println(item)
+//        val TAG = this.javaClass.getSimpleName()
+//        Log.i(TAG,"меню = "+item)
+//        return true
+//        //return super.onContextItemSelected(item)
+//    }
 
     private val secondActivityWithResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -103,4 +105,17 @@ class MainActivity : AppCompatActivity() {
         builder.show()
         return true
     }
+
+    override fun callback(image: ImageView) {
+        println("image = $image")
+        imageAuthor = image
+        pickImages.launch("image/*")
+    }
+            private val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {uri ->
+                imageAuthor.setImageURI(uri)
+//todo сделать изменение соотвествующего элемента в langList
+            }
+        }
+
 }
