@@ -1,5 +1,6 @@
 package com.example.kotlinlabs
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.os.Bundle
@@ -18,18 +19,30 @@ import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+
+import android.content.pm.PackageManager
+
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity(), MyInterface {
     private lateinit var imageAuthor: ImageView
+    private var curentPosInLangList: Int = -1
+
     private lateinit var binding: ActivityMainBinding
-    private var langList: ArrayList<ProgrLang> = arrayListOf(ProgrLang("Basic", 1964, R.drawable.basic), ProgrLang("Pascal", 1975, R.drawable.pascal),
-                                                             ProgrLang("C", 1972, R.drawable.c), ProgrLang("C++", 1983, R.drawable.cpp),
-                                                             ProgrLang("C#", 2000, R.drawable.c_sharp), ProgrLang("Java", 1995, R.drawable.java),
-                                                             ProgrLang("Python", 1991, R.drawable.python), ProgrLang("JavaScript", 1995),
-                                                             ProgrLang("Kotlin", 2011))
+//    private var langList: ArrayList<ProgrLang> = arrayListOf(ProgrLang("Basic", 1964, R.drawable.basic as Object), ProgrLang("Pascal", 1975, R.drawable.pascal as Object),
+//        ProgrLang("C", 1972, R.drawable.c as Object), ProgrLang("C++", 1983, R.drawable.cpp as Object),
+//        ProgrLang("C#", 2000, R.drawable.c_sharp as Object), ProgrLang("Java", 1995, R.drawable.java as Object),
+//        ProgrLang("Python", 1991, R.drawable.python as Object), ProgrLang("JavaScript", 1995),
+//        ProgrLang("Kotlin", 2011))
+
+    private var langList: ArrayList<ProgrLang> = arrayListOf(ProgrLang("Basic", 1964, R.drawable.basic.toString()), ProgrLang("Pascal", 1975, R.drawable.pascal.toString()),
+        ProgrLang("C", 1972, R.drawable.c.toString()), ProgrLang("C++", 1983, R.drawable.cpp.toString()),
+        ProgrLang("C#", 2000, R.drawable.c_sharp.toString()), ProgrLang("Java", 1995, R.drawable.java.toString()),
+        ProgrLang("Python", 1991, R.drawable.python.toString()), ProgrLang("JavaScript", 1995),
+        ProgrLang("Kotlin", 2011))
     private lateinit var recyclerView: RecyclerView
     private lateinit var progLangsAdapter: MyAdapter
-//    lateinit var info: AdapterView.AdapterContextMenuInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,14 +50,12 @@ class MainActivity : AppCompatActivity(), MyInterface {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         recyclerView = findViewById(R.id.recyclerView)
-      //  registerForContextMenu(recyclerView)
         if (savedInstanceState!=null && savedInstanceState.containsKey("langs")) {
             langList = savedInstanceState.getSerializable("langs") as ArrayList<ProgrLang>
             Toast.makeText(this, "From saved", Toast.LENGTH_SHORT).show()
         } else Toast.makeText(this, "From create", Toast.LENGTH_SHORT).show()
 
-        progLangsAdapter = MyAdapter(langList, this).also { it.myInterface = this }
-//        progLangsAdapter.
+        progLangsAdapter = MyAdapter(langList).also { it.myInterface = this }
         val layoutManager = LinearLayoutManager(applicationContext)
         recyclerView.layoutManager = layoutManager
 //        recyclerView.itemAnimator = DefaultItemAnimator()
@@ -69,14 +80,6 @@ class MainActivity : AppCompatActivity(), MyInterface {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-//    override fun onContextItemSelected(item: MenuItem): Boolean {
-//        println(item)
-//        val TAG = this.javaClass.getSimpleName()
-//        Log.i(TAG,"меню = "+item)
-//        return true
-//        //return super.onContextItemSelected(item)
-//    }
 
     private val secondActivityWithResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -106,16 +109,26 @@ class MainActivity : AppCompatActivity(), MyInterface {
         return true
     }
 
-    override fun callback(image: ImageView) {
+    override fun callback(image: ImageView, pos: Int) {
+        val permission: String = Manifest.permission.READ_EXTERNAL_STORAGE
+        val grant = ContextCompat.checkSelfPermission(applicationContext, permission)
+        if (grant != PackageManager.PERMISSION_GRANTED) {
+            val permission_list = arrayOfNulls<String>(1)
+            permission_list[0] = permission
+            ActivityCompat.requestPermissions(this, permission_list, 1)
+        }
+        curentPosInLangList = pos
         println("image = $image")
+        println("pos = $curentPosInLangList")
         imageAuthor = image
         pickImages.launch("image/*")
     }
-            private val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let {uri ->
-                imageAuthor.setImageURI(uri)
-//todo сделать изменение соотвествующего элемента в langList
-            }
+    private val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {uri ->
+            imageAuthor.setImageURI(uri)
+            println("image uri = $uri")
+            langList[curentPosInLangList].picture = uri.toString()
         }
+    }
 
 }
