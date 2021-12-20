@@ -46,7 +46,7 @@ import androidx.recyclerview.widget.RecyclerView
     }
 
      override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenu.ContextMenuInfo?) {
-         val edit = menu.add(Menu.NONE, 1, 1, "Edit picture")
+         val edit = menu.add(Menu.NONE, 1, 1, "Edit picture") //создаем пункт меню Edit picture
          edit.setOnMenuItemClickListener {
              var pic = (view as LinearLayout).getChildAt(1) as ImageView
              val pos = view.tag as Int
