@@ -25,7 +25,7 @@ import android.content.pm.PackageManager
 
 import androidx.core.content.ContextCompat
 
-class MainActivity : AppCompatActivity(), MyInterface {
+class MainActivity_Lab5 : AppCompatActivity(), MyInterface {
     private lateinit var imageAuthor: ImageView
     private var curentPosInLangList: Int = -1
 
