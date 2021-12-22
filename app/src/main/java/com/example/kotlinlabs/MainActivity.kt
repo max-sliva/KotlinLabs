@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlinlabs.databinding.ActivityMainBinding
 import android.content.Intent
+import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.util.Log
 import android.view.ContextMenu
 import android.view.View
@@ -24,6 +25,10 @@ import androidx.core.app.ActivityCompat
 import android.content.pm.PackageManager
 
 import androidx.core.content.ContextCompat
+import android.database.sqlite.SQLiteDatabase
+
+
+
 
 class MainActivity : AppCompatActivity(), MyInterface {
     private lateinit var imageAuthor: ImageView
@@ -43,6 +48,9 @@ class MainActivity : AppCompatActivity(), MyInterface {
         ProgrLang("Kotlin", 2011))
     private lateinit var recyclerView: RecyclerView
     private lateinit var progLangsAdapter: MyAdapter
+    var dbHelper : LangsDbHelper? = null // объект класса DBHelper
+    var db : SQLiteDatabase? = null //объект для работы с БД
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,10 +58,33 @@ class MainActivity : AppCompatActivity(), MyInterface {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         recyclerView = findViewById(R.id.recyclerView)
+        dbHelper = LangsDbHelper(this)
+
+
+//        val permission: String = Manifest.permission.FLAG_GRANT_READ_URI_PERMISSION
+//        val grant = ContextCompat.checkSelfPermission(applicationContext, permission)
+//        if (grant != PackageManager.PERMISSION_GRANTED) {
+//            val permission_list = arrayOfNulls<String>(1)
+//            permission_list[0] = permission
+//            ActivityCompat.requestPermissions(this, permission_list, 1)
+//        }
+
+
         if (savedInstanceState!=null && savedInstanceState.containsKey("langs")) {
             langList = savedInstanceState.getSerializable("langs") as ArrayList<ProgrLang>
             Toast.makeText(this, "From saved", Toast.LENGTH_SHORT).show()
-        } else Toast.makeText(this, "From create", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "From create", Toast.LENGTH_SHORT).show()
+            if (dbHelper!!.isEmpty()) {
+                println("DB is emty")
+                dbHelper!!.addArrayToDB(langList)
+                dbHelper!!.printDB()
+            } else {
+                println("DB has records")
+                dbHelper!!.printDB()
+                langList = dbHelper!!.getLangsArray()
+            }
+        }
 
         progLangsAdapter = MyAdapter(langList).also { it.myInterface = this }
         val layoutManager = LinearLayoutManager(applicationContext)
@@ -87,6 +118,7 @@ class MainActivity : AppCompatActivity(), MyInterface {
             Toast.makeText (recyclerView.context, "New: " + newLang.name + " "+newLang.year, Toast.LENGTH_LONG).show()
             langList.add(0,newLang)
             progLangsAdapter.notifyDataSetChanged()
+            dbHelper!!.addLang(newLang)
         }
     }
 
@@ -110,7 +142,8 @@ class MainActivity : AppCompatActivity(), MyInterface {
     }
 
     override fun callback(image: ImageView, pos: Int) {
-        val permission: String = Manifest.permission.READ_EXTERNAL_STORAGE
+        val permission: String = Manifest.permission.READ_EXTERNAL_STORAGE //todo добавить   Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
         val grant = ContextCompat.checkSelfPermission(applicationContext, permission)
         if (grant != PackageManager.PERMISSION_GRANTED) {
             val permission_list = arrayOfNulls<String>(1)
@@ -128,6 +161,7 @@ class MainActivity : AppCompatActivity(), MyInterface {
             imageAuthor.setImageURI(uri)
             println("image uri = $uri")
             langList[curentPosInLangList].picture = uri.toString()
+            dbHelper!!.changeImgForLang(langList[curentPosInLangList].name, langList[curentPosInLangList].picture)
         }
     }
 

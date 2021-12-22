@@ -2,6 +2,7 @@ package com.example.kotlinlabs
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.view.*
 import android.widget.*
@@ -73,6 +74,9 @@ import androidx.recyclerview.widget.RecyclerView
             holder.langAuthor.setImageURI(Uri.parse(lang.picture))
         }
         catch (e: NumberFormatException) {
+
+//            holder.itemView.context.contentResolver.takePersistableUriPermission(Uri.parse(lang.picture),
+//                Intent.FLAG_GRANT_READ_URI_PERMISSION);
             holder.langAuthor.setImageURI(Uri.parse(lang.picture))
         }
     }

@@ -5,11 +5,10 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.provider.BaseColumns
 
-class LangsDbHelper (context: Context, factory: SQLiteDatabase.CursorFactory?) :
-    SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION){
-    companion object{// here we have defined variables for our database
+class LangsDbHelper (context: Context) :
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION){
+    companion object{ // here we have defined variables for our database
         private val DATABASE_NAME = "LANGS" //variable for database name
         private val DATABASE_VERSION = 1 // variable for database version
         val TABLE_NAME = "langs_table" // below is the variable for table name
@@ -30,29 +29,86 @@ class LangsDbHelper (context: Context, factory: SQLiteDatabase.CursorFactory?) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {
-        // this method is to check if table already exists
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME)
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME) //method to check if table already exists
         onCreate(db)
     }
 
-    fun addName(lang: ProgrLang){ // This method is for adding data in our database
+    fun isEmpty(): Boolean {
+        val cursor = getCurcor()
+        return !cursor!!.moveToFirst()
+    }
+
+    fun printDB(){
+        val cursor = getCurcor()
+        if (!isEmpty()) {
+            cursor!!.moveToFirst()
+            val nameColIndex = cursor.getColumnIndex(NAME_COl)
+            val yearColIndex = cursor.getColumnIndex(YEAR_COL)
+            val pictureColIndex = cursor.getColumnIndex(PICTURE_COL)
+            do {
+                print("${cursor.getString(nameColIndex)} ")
+                print("${cursor.getString(yearColIndex)} ")
+                println("${cursor.getString(pictureColIndex)} ")
+            } while (cursor.moveToNext())
+        } else println("DB is empty")
+    }
+
+    fun addArrayToDB(progLangs: ArrayList<ProgrLang>){
+        progLangs.forEach {
+            addLang(it)
+        }
+    }
+
+    fun addLang(lang: ProgrLang){ // This method is for adding data in our database
         val values = ContentValues() // below we are creating a content values variable
         values.put(NAME_COl, lang.name) // we are inserting our values in the form of key-value pair
         values.put(YEAR_COL, lang.year)
         values.put(PICTURE_COL, lang.picture)
-
-        // here we are creating a writable variable of
-        // our database as we want to insert value in our database
-        val db = this.writableDatabase
+        val db = this.writableDatabase //writable variable of our database as we want to insert value in our database
         db.insert(TABLE_NAME, null, values) // all values are inserted into database
         db.close() // at last we are closing our database
     }
 
-    fun getLang(): Cursor? { // method is to get all data from our database
+    fun getCurcor(): Cursor? { // method is to get all data from our database
         val db = this.readableDatabase // a readable variable of our database
         //returns a cursor to read data from the database
         return db.rawQuery("SELECT * FROM " + TABLE_NAME, null)
+    }
 
+    fun changeImgForLang(name: String, img: String){
+        val db = this.writableDatabase //writable variable of our database as we want to insert value in our database
+        val values = ContentValues()
+        values.put(PICTURE_COL, img)
+        db.update(TABLE_NAME, values, NAME_COl+" = '$name'", null)
+//        val cursor = db.rawQuery("SELECT * FROM $TABLE_NAME WHERE $NAME_COl = '$name'", null)
+        db.close()
+//        cursor.moveToFirst()
+//        val nameColIndex = cursor.getColumnIndex(NAME_COl)
+//        val yearColIndex = cursor.getColumnIndex(YEAR_COL)
+//        val pictureColIndex = cursor.getColumnIndex(PICTURE_COL)
+//        println("Change in langs: ")
+//        print("${cursor.getString(nameColIndex)} ")
+//        print("${cursor.getString(yearColIndex)} ")
+//        println("${cursor.getString(pictureColIndex)} ")
+        //"UPDATE orders SET order_price=:price WHERE order_id = :id"
+    }
+
+    fun getLangsArray(): ArrayList<ProgrLang>{
+        var progsArray = ArrayList<ProgrLang>()
+        val cursor = getCurcor()
+        if (!isEmpty()) {
+            cursor!!.moveToFirst()
+            val nameColIndex = cursor.getColumnIndex(NAME_COl)
+            val yearColIndex = cursor.getColumnIndex(YEAR_COL)
+            val pictureColIndex = cursor.getColumnIndex(PICTURE_COL)
+            do {
+                val name = cursor.getString(nameColIndex)
+                val year = cursor.getString(yearColIndex).toInt()
+                val picture = cursor.getString(pictureColIndex)
+                progsArray.add(ProgrLang(name, year, picture))
+            } while (cursor.moveToNext())
+        } else println("DB is empty")
+        return progsArray
     }
 //    object LangsContract {
 //        // Table contents are grouped together in an anonymous object.
