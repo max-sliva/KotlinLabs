@@ -2,11 +2,9 @@ package com.example.kotlinlabs
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.view.*
 import android.widget.*
-import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 
  class MyAdapter(private var langList: ArrayList<ProgrLang>) :
@@ -74,9 +72,8 @@ import androidx.recyclerview.widget.RecyclerView
             holder.langAuthor.setImageURI(Uri.parse(lang.picture))
         }
         catch (e: NumberFormatException) {
-
-//            holder.itemView.context.contentResolver.takePersistableUriPermission(Uri.parse(lang.picture),
-//                Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//            appContext.contentResolver.takePersistableUriPermission(Uri.parse(lang.picture), FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+//            appContext.contentResolver.takePersistableUriPermission(Uri.parse(lang.picture), FLAG_GRANT_READ_URI_PERMISSION)
             holder.langAuthor.setImageURI(Uri.parse(lang.picture))
         }
     }

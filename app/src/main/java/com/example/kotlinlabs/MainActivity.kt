@@ -7,16 +7,10 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlinlabs.databinding.ActivityMainBinding
 import android.content.Intent
-import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
-import android.util.Log
-import android.view.ContextMenu
-import android.view.View
-import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -143,21 +137,38 @@ class MainActivity : AppCompatActivity(), MyInterface {
 
     override fun callback(image: ImageView, pos: Int) {
         val permission: String = Manifest.permission.READ_EXTERNAL_STORAGE //todo добавить   Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
         val grant = ContextCompat.checkSelfPermission(applicationContext, permission)
         if (grant != PackageManager.PERMISSION_GRANTED) {
             val permission_list = arrayOfNulls<String>(1)
             permission_list[0] = permission
             ActivityCompat.requestPermissions(this, permission_list, 1)
         }
+
         curentPosInLangList = pos
         println("image = $image")
         println("pos = $curentPosInLangList")
         imageAuthor = image
-        pickImages.launch("image/*")
+
+        val intent = Intent()
+            .setType("image/*")
+            .setAction(Intent.ACTION_OPEN_DOCUMENT)
+            .addCategory(Intent.CATEGORY_OPENABLE)
+        getImg.launch(intent)
     }
+
+    val getImg = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri = result.data?.data
+            imageAuthor.setImageURI(uri)
+            println("image uri = $uri")
+            langList[curentPosInLangList].picture = uri.toString()
+            dbHelper!!.changeImgForLang(langList[curentPosInLangList].name, langList[curentPosInLangList].picture)
+        }
+    }
+
     private val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {uri ->
+//            applicationContext.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             imageAuthor.setImageURI(uri)
             println("image uri = $uri")
             langList[curentPosInLangList].picture = uri.toString()

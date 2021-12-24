@@ -80,17 +80,7 @@ class LangsDbHelper (context: Context) :
         val values = ContentValues()
         values.put(PICTURE_COL, img)
         db.update(TABLE_NAME, values, NAME_COl+" = '$name'", null)
-//        val cursor = db.rawQuery("SELECT * FROM $TABLE_NAME WHERE $NAME_COl = '$name'", null)
         db.close()
-//        cursor.moveToFirst()
-//        val nameColIndex = cursor.getColumnIndex(NAME_COl)
-//        val yearColIndex = cursor.getColumnIndex(YEAR_COL)
-//        val pictureColIndex = cursor.getColumnIndex(PICTURE_COL)
-//        println("Change in langs: ")
-//        print("${cursor.getString(nameColIndex)} ")
-//        print("${cursor.getString(yearColIndex)} ")
-//        println("${cursor.getString(pictureColIndex)} ")
-        //"UPDATE orders SET order_price=:price WHERE order_id = :id"
     }
 
     fun getLangsArray(): ArrayList<ProgrLang>{
@@ -110,21 +100,4 @@ class LangsDbHelper (context: Context) :
         } else println("DB is empty")
         return progsArray
     }
-//    object LangsContract {
-//        // Table contents are grouped together in an anonymous object.
-//        object LangsEntry : BaseColumns {
-//            const val TABLE_NAME = "langs"
-//            const val COLUMN_LANG_NAME = "lang_name"
-//            const val COLUMN_YEAR = "lang_year"
-//            const val COLUMN_PICTURE = "lang_picture"
-//        }
-//    }
-//    private val SQL_CREATE_ENTRIES =
-//        "CREATE TABLE ${LangsContract.LangsEntry.TABLE_NAME} (" +
-//                "${BaseColumns._ID} INTEGER PRIMARY KEY," +
-//                "${LangsContract.LangsEntry.COLUMN_LANG_NAME} TEXT," +
-//                "${LangsContract.LangsEntry.COLUMN_YEAR} TEXT," +
-//                "${LangsContract.LangsEntry.COLUMN_PICTURE} TEXT)"
-//
-//    private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${LangsContract.LangsEntry.TABLE_NAME}"
 }
