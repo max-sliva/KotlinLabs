@@ -54,16 +54,6 @@ class MainActivity : AppCompatActivity(), MyInterface {
         recyclerView = findViewById(R.id.recyclerView)
         dbHelper = LangsDbHelper(this)
 
-
-//        val permission: String = Manifest.permission.FLAG_GRANT_READ_URI_PERMISSION
-//        val grant = ContextCompat.checkSelfPermission(applicationContext, permission)
-//        if (grant != PackageManager.PERMISSION_GRANTED) {
-//            val permission_list = arrayOfNulls<String>(1)
-//            permission_list[0] = permission
-//            ActivityCompat.requestPermissions(this, permission_list, 1)
-//        }
-
-
         if (savedInstanceState!=null && savedInstanceState.containsKey("langs")) {
             langList = savedInstanceState.getSerializable("langs") as ArrayList<ProgrLang>
             Toast.makeText(this, "From saved", Toast.LENGTH_SHORT).show()
@@ -79,7 +69,6 @@ class MainActivity : AppCompatActivity(), MyInterface {
                 langList = dbHelper!!.getLangsArray()
             }
         }
-
         progLangsAdapter = MyAdapter(langList).also { it.myInterface = this }
         val layoutManager = LinearLayoutManager(applicationContext)
         recyclerView.layoutManager = layoutManager
@@ -166,14 +155,14 @@ class MainActivity : AppCompatActivity(), MyInterface {
         }
     }
 
-    private val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {uri ->
-//            applicationContext.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            imageAuthor.setImageURI(uri)
-            println("image uri = $uri")
-            langList[curentPosInLangList].picture = uri.toString()
-            dbHelper!!.changeImgForLang(langList[curentPosInLangList].name, langList[curentPosInLangList].picture)
-        }
-    }
+//    private val pickImages = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+//        uri?.let {uri ->
+////            applicationContext.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//            imageAuthor.setImageURI(uri)
+//            println("image uri = $uri")
+//            langList[curentPosInLangList].picture = uri.toString()
+//            dbHelper!!.changeImgForLang(langList[curentPosInLangList].name, langList[curentPosInLangList].picture)
+//        }
+//    }
 
 }
