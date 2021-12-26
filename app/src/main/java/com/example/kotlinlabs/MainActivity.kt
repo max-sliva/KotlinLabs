@@ -49,7 +49,8 @@ class MainActivity : AppCompatActivity(), MyInterface {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+//        setContentView(binding.root)
+        setContentView(R.layout.content_main)
         setSupportActionBar(binding.toolbar)
         recyclerView = findViewById(R.id.recyclerView)
         dbHelper = LangsDbHelper(this)

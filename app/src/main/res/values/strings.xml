@@ -18,4 +18,7 @@
     <string name="about_content">Супер прога о языках программирования</string>
     <string name="addNew">Добавить язык</string>
     <string name="change_picture">Поменять картинку2</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
 </resources>
