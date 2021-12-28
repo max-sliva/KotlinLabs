@@ -9,20 +9,19 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.kotlinlabs.databinding.ActivityMainBinding
 import android.content.Intent
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-
 import android.content.pm.PackageManager
-
 import androidx.core.content.ContextCompat
 import android.database.sqlite.SQLiteDatabase
-
-
-
+import android.widget.RemoteViews
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.view.View
+import com.example.kotlinlabs.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), MyInterface {
     private lateinit var imageAuthor: ImageView
@@ -36,7 +35,7 @@ class MainActivity : AppCompatActivity(), MyInterface {
 //        ProgrLang("Kotlin", 2011))
 
     private var langList: ArrayList<ProgrLang> = arrayListOf(ProgrLang("Basic", 1964, R.drawable.basic.toString()), ProgrLang("Pascal", 1975, R.drawable.pascal.toString()),
-        ProgrLang("C", 1972, R.drawable.c.toString()), ProgrLang("C++", 1983, R.drawable.c_sharp.toString()),
+        ProgrLang("C", 1972, R.drawable.c.toString()), ProgrLang("C++", 1983, R.drawable.cpp.toString()),
         ProgrLang("C#", 2000, R.drawable.c_sharp.toString()), ProgrLang("Java", 1995, R.drawable.java.toString()),
         ProgrLang("Python", 1991, R.drawable.python.toString()), ProgrLang("JavaScript", 1995),
         ProgrLang("Kotlin", 2011))
@@ -49,9 +48,10 @@ class MainActivity : AppCompatActivity(), MyInterface {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-//        setContentView(binding.root)
-        setContentView(R.layout.content_main)
+        setContentView(binding.root)
+//        setContentView(R.layout.content_main)
         setSupportActionBar(binding.toolbar)
+        //supportActionBar!!.setDisplayShowTitleEnabled(true)
         recyclerView = findViewById(R.id.recyclerView)
         dbHelper = LangsDbHelper(this)
 
@@ -103,6 +103,19 @@ class MainActivity : AppCompatActivity(), MyInterface {
             langList.add(0,newLang)
             progLangsAdapter.notifyDataSetChanged()
             dbHelper!!.addLang(newLang)
+
+            val watchWidget = ComponentName(this, NewAppWidget::class.java) //объект для виджета //связываем с нашим виджетом
+            val appWidgetManager = AppWidgetManager.getInstance(this) //менеджер виджетов
+            //создаем объект класса RemoteViews, через него будем менять наш виджет
+            val remoteViews = RemoteViews(this.packageName, R.layout.new_app_widget)
+//устанавливаем содержимое соответствующих объектов интерфейса
+           // NewAppWidget.pos = 0
+//            remoteViews.setTextViewText(R.id.widgetLangName, newLang.name)
+//            remoteViews.setTextViewText(R.id.widgetLangYear, newLang.year.toString())
+//            remoteViews.setViewVisibility(R.id.buttonPrev, View.GONE) //делаем недоступной кнопку Prev
+//            remoteViews.setViewVisibility(R.id.buttonNext, View.VISIBLE) // активизируем кнопку Next
+            appWidgetManager.updateAppWidget(watchWidget, remoteViews) //обновляем виджет
+
         }
     }
 
@@ -153,6 +166,17 @@ class MainActivity : AppCompatActivity(), MyInterface {
             println("image uri = $uri")
             langList[curentPosInLangList].picture = uri.toString()
             dbHelper!!.changeImgForLang(langList[curentPosInLangList].name, langList[curentPosInLangList].picture)
+            val watchWidget = ComponentName(this, NewAppWidget::class.java) //объект для виджета //связываем с нашим виджетом
+            val appWidgetManager = AppWidgetManager.getInstance(this) //менеджер виджетов
+            //создаем объект класса RemoteViews, через него будем менять наш виджет
+            val remoteViews = RemoteViews(this.packageName, R.layout.new_app_widget)
+//устанавливаем содержимое соответствующих объектов интерфейса
+//            remoteViews!!.setImageViewUri(R.id.widgetAuthImg, uri) // и выводим на ImageView
+//            NewAppWidget.pos = 0
+//            remoteViews.setViewVisibility(R.id.buttonPrev, View.GONE); //делаем недоступной кнопку Prev
+//            remoteViews.setViewVisibility(R.id.buttonNext, View.VISIBLE); // активизируем кнопку Next
+            appWidgetManager.updateAppWidget(watchWidget, remoteViews); //обновляем виджет
+
         }
     }
 

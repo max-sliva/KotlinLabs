@@ -12,6 +12,14 @@ import android.database.Cursor
 import android.net.Uri
 import java.lang.NumberFormatException
 import android.content.ComponentName
+import java.lang.Exception
+import android.provider.MediaStore
+
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.os.Build
+import androidx.annotation.RequiresApi
+
 
 class NewAppWidget : AppWidgetProvider() {
     var remoteViews : RemoteViews? = null//объект для доступа к интерфейсу нашего виджета
@@ -25,6 +33,20 @@ class NewAppWidget : AppWidgetProvider() {
         var pos = 0 // статическая переменная текущей позиции в списке языков
     }
 
+    override fun onEnabled(context: Context) {
+        //pos = 0 //зануляем позицию в списке языков
+        //создаем объект класса RemoteViews, через него будем менять значения нужных параметров в интерфейсе
+        remoteViews = RemoteViews(context.packageName, R.layout.new_app_widget)
+        remoteViews!!.setViewVisibility(R.id.buttonPrev, View.GONE) //делаем неактивной кнопку Prev,
+
+//т.е. у объекта с идентификатором R.id.buttonPrev устанавливаем параметр setEnabled в значение false
+        //т.е. у объекта с идентификатором R.id.buttonPrev устанавливаем параметр setEnabled в значение false
+        remoteViews!!.setViewVisibility(R.id.buttonNext, View.VISIBLE)
+        Toast.makeText(context, "onEnabled", Toast.LENGTH_SHORT).show()
+        super.onEnabled(context) //вызов родительского метода
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -62,23 +84,7 @@ class NewAppWidget : AppWidgetProvider() {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
-    override fun onEnabled(context: Context) {
-        pos = 0 //зануляем позицию в списке языков
-        //создаем объект класса RemoteViews, через него будем менять значения нужных параметров в интерфейсе
-        remoteViews = RemoteViews(context.packageName, R.layout.new_app_widget)
-        remoteViews!!.setViewVisibility(R.id.buttonPrev, View.GONE) //делаем неактивной кнопку Prev,
-
-//т.е. у объекта с идентификатором R.id.buttonPrev устанавливаем параметр setEnabled в значение false
-        //т.е. у объекта с идентификатором R.id.buttonPrev устанавливаем параметр setEnabled в значение false
-        remoteViews!!.setViewVisibility(R.id.buttonNext, View.VISIBLE)
-        Toast.makeText(context, "onEnabled", Toast.LENGTH_SHORT).show()
-        super.onEnabled(context) //вызов родительского метода
-    }
-
-    override fun onDisabled(context: Context) {
-        // Enter relevant functionality for when the last widget is disabled
-    }
-
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun updateMyWidget(remoteViews: RemoteViews, c2: Cursor, context: Context) {
         val nameColIndex = c2!!.getColumnIndex("lang_name") //получаем номера столбцов с нужными данными
         val yearColIndex = c2!!.getColumnIndex("year")
@@ -94,13 +100,25 @@ class NewAppWidget : AppWidgetProvider() {
         try { //для картинки автора пробуем организуем try … catch
             //пробуем преобразовать его в число, если получается, значит взято из внутренних ресурсов
             //т.к. все ресурсы хранятся в виде числовых констант, и выводим на ImageView
+            println("in widget image try block1 $authorInDB")
+           // val uri: Uri = Uri.parse(authorInDB) //делаем из него URI (см. в лаб.раб.№5 )
+//            remoteViews!!.setImageViewUri(R.id.widgetAuthImg, Uri.parse(authorInDB)) // и выводим на ImageView
             remoteViews!!.setImageViewResource(R.id.widgetAuthImg, authorInDB.toInt())
         } catch (e: NumberFormatException) { // если сработало исключение, значит, там путь к файлу
             val uri: Uri = Uri.parse(authorInDB) //делаем из него URI (см. в лаб.раб.№5 )
-            remoteViews!!.setImageViewUri(R.id.widgetAuthImg, uri) // и выводим на ImageView
+            val bitmap  = ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
+            remoteViews!!.setImageViewBitmap(R.id.widgetAuthImg, bitmap) // и выводим на ImageView
+            println("in widget image try block2 $uri")
+//            e.printStackTrace()
+        }  catch (e: Exception) {
+            e.printStackTrace()
+            val uri: Uri = Uri.parse(authorInDB) //делаем из него URI (см. в лаб.раб.№5 )
+//            remoteViews!!.setImageViewUri(R.id.widgetAuthImg, uri) // и выводим на ImageView
+            println("in widget image try block3")
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onReceive(context: Context, intent: Intent) {
         //Ловим наш интент и берем его действие, прописанное нами
         val action = intent.action
