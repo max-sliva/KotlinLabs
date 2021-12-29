@@ -92,9 +92,17 @@ class MainActivity : AppCompatActivity(), MyInterface {
         return when (item.itemId) {
             R.id.action_settings -> onAboutClick(item)
             R.id.addNew -> onAddNewClick(item)
+            R.id.draw -> onDrawClick()
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    private fun onDrawClick(): Boolean {
+        val drawAct = Intent(applicationContext, DrawingActivity::class.java)
+        startActivity(drawAct)
+        return false
+    }
+
 
     private val secondActivityWithResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
