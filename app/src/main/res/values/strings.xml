@@ -12,7 +12,7 @@
     <string name="Pascal">Автор - Никлаус Вирт.</string>
     <string name="C">Автор - Деннис Ритчи.</string>
     <string name="Java">Автор - Джеймс Гослинг.</string>
-    <string name="save">Сохранить</string>
+    <string name="save">Save</string>
     <string name="open">Открыть</string>
     <string name="about">О программе</string>
     <string name="about_content">Супер прога о языках программирования</string>
@@ -26,4 +26,5 @@
     <string name="circle">Circle</string>
     <string name="square">Square</string>
     <string name="face">Face</string>
+    <string name="save_problem">Save "can't" be done (maybe problem with sdcard</string>
 </resources>
